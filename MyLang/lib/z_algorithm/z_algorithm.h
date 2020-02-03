@@ -1,5 +1,5 @@
-#ifndef Z_MATCH_ALGORITHM_H
-#define Z_MATCH_ALGORITHM_H
+#ifndef Z_FIND_ALGORITHM_H
+#define Z_FIND_ALGORITHM_H
 
 #include <stddef.h>
 
@@ -21,7 +21,7 @@ void generate_z_string (char*        z_string,
                         size_t       z_len,
                         size_t       substr_len);
 
-bool find              (const char* search_string,
+bool z_find            (const char* search_string,
                         const char* sub_string);
 
-#endif /* Z_MATCH_ALGORITHM_H */
+#endif /* Z_FIND_ALGORITHM_H */

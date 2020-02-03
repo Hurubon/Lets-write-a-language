@@ -16,7 +16,9 @@ void calculate_z_value(const char*  s,
 
 void generate_z_array(const char* s, const size_t s_len, int* Z) {
 
-    size_t L = 0, R = 0, i;
+    size_t L = 0;
+	size_t R = 0;
+	size_t i;
 
     for (i = 1; i < s_len; ++i) {
 
@@ -48,6 +50,7 @@ void generate_z_string(char*       z_string,
                        const char* sub_string,
                        size_t      z_len,
                        size_t      substr_len) {
+                       	
     size_t i;
     for (i = 0; i < z_len; ++i) {
 
@@ -62,9 +65,10 @@ void generate_z_string(char*       z_string,
     }
 
     z_string[z_len] = '\0';
+    
 }
 
-bool find(const char* search_string, const char* sub_string) {
+bool z_find(const char* search_string, const char* sub_string) {
 
     bool was_found = false;
 
