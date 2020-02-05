@@ -3,43 +3,43 @@
 
 #include "lib/bool/bool.h"
 #include "lib/z_algorithm/z_algorithm.h"
-void scan_names(FILE* file_ptr, char** token_ptr, size_t token_size, const char input) {
 
-	char c = input;
-	size_t curr_size = token_size;
-	size_t i;
+void scan_label(FILE* file_ptr, char input) {
 	
-	for (i = 0; (c = fgetc(file_ptr)) != ' '; ++i) {
-		
-		(*token_ptr)[i] = c;
-		
-		if (i < curr_size) {
-			continue;
-		} 
-		
-		char* temp = realloc(*token_ptr, curr_size * 2);
-		curr_size *= 2;
-		
-		if (temp == NULL) {
-			exit(1);
-		}
-		
-		*token_ptr = temp;
-		
-	}
-
+	bool is_label_char;
+	char* token = malloc(128);
+	int i = 0;
+	
+	do {
+		token[i++] = input;
+		input = fgetc(file_ptr);
+		is_label_char = isalpha(input) || input == '_';
+	} while (is_label_char);
+	
+	token[i] = '\0';
+	
+	printf("{'%s': 'label'}\n", token);
+	
+	fseek(file_ptr, -1, SEEK_CUR);
+	
+	free(token);
+	
 }
 
 void lex(FILE* file_ptr, char input) {
 	
-	const size_t token_size = 64;
-	char token[token_size];
-	
-	if (isalpha(input) || input == '_') {
-		scan_names(file_ptr, &token, token_size, input);
+	if (input == ' ' || input == '\t' || input == '\n') {
+		return;
 	}
-	
-	printf("%s", name);
+	else if (isalpha(input) || input == '_') {
+		scan_label(file_ptr, input);
+	} 
+	else if (z_find("()[]{}", &input)) {
+		printf("{'%c': 'bracket'}\n", input);
+	}
+	else {
+		printf("{'%c'}\n", input);
+	}
 	
 }
 
