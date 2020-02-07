@@ -4,14 +4,6 @@
 
 #include "zfind_algorithm.h"
 
-#define FIND_ZVALUE(z_array, z_string, z_len, left, right, i) {          \
-    while (right < z_len && z_string[right - left] == z_string[right]) { \
-        right++;                                                         \
-    }                                                                    \
-    z_array[i] = right - left;                                           \
-    right--;                                                             \
-}
-
 static void generate_zarray(int*         z_array,
                             const char*  z_string,
                             const size_t z_len) {
@@ -24,19 +16,18 @@ static void generate_zarray(int*         z_array,
 
         if (i > right) {
             left = right = i;
-            FIND_ZVALUE(z_array, z_string, z_len,
-                        left,    right,    i);
         }
         else {
             k = i - left;
-            if (z_array[k] < right - i + 1) {
+            if (z_array[k] < right - i + 1)
                 z_array[i] = z_array[k];
-            }
-            else {
-                FIND_ZVALUE(z_array, z_string, z_len,
-                            left,    right,    i);
-            }
         }
+
+        while (right < z_len && z_string[right - left] == z_string[right]) {
+            right++;
+        }
+        z_array[i] = right - left;
+        right--;
 
     }
 
