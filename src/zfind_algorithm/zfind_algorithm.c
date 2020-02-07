@@ -24,10 +24,10 @@ static void generate_zarray(int*         z_array,
         }
 
         while (right < z_len && z_string[right - left] == z_string[right]) {
-            right++;
+            right += 1;
         }
         z_array[i] = right - left;
-        right--;
+        right -= 1;
 
     }
 
