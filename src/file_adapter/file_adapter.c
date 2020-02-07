@@ -6,7 +6,6 @@
 
 void fileadapter_load(FileAdapter* file, const char* file_name) {
 
-    size_t i;
     FILE* cfile = fopen(file_name, "r");
     error_check(cfile != NULL, MALLOC_ERROR);
 
