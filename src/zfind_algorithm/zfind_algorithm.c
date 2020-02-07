@@ -89,5 +89,3 @@ bool zfind_chr(const char character, const char* str) {
     return was_found;
 
 }
-
-#undef FIND_ZVALUE
