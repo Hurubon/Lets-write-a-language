@@ -26,6 +26,10 @@ void error_check(bool statement, int error_code) {
             printf("Memory allocation failed!\n");
             break;
 
+        case EOF_REACHED_FLAG:
+            printf("End of file reached!\n");
+            break;
+
         default:
             printf("Undocumented error!\n");
 

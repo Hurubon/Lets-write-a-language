@@ -1,0 +1,9 @@
+#undef IS_WHITESPACE
+#undef STARTS_LABEL
+#undef IS_LABEL_CHAR
+#undef STARTS_STRING
+#undef IS_HEX_DIGIT
+#undef IS_BIN_DIGIT
+#undef IS_DEC_DIGIT
+#undef IS_BRACKET
+#undef IS_PUNCTUATION

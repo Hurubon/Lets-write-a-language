@@ -1,3 +1,11 @@
 if (condition) {
+
   do_something();
+  print("Did something!");
+
+  str = "";
+  hex = 0x56F1;
+  bin = 0100110;
+  dec = 1543;
+
 }

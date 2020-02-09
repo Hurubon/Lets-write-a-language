@@ -5,6 +5,7 @@
 #include "errors/errors.h"
 #include "file_adapter/file_adapter.h"
 #include "zfind_algorithm/zfind_algorithm.h"
+#include "lexer/lexer.h"
 
 int main(void) {
 
@@ -13,7 +14,7 @@ int main(void) {
     fileadapter_load(file, "../testfile.txt");
 
     /* TODO: Lex(file) */
-    /* code */
+    mylang_lex(file);
 
     fileadapter_free(file);
     getchar();

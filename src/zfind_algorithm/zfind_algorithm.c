@@ -12,7 +12,7 @@ static void generate_zarray(int*         z_array,
     size_t right = 0;
     size_t k, i;
 
-    for (i = 1; i < z_len; i++) {
+    for (i = 1; i < z_len; ++i) {
 
         if (i > right) {
             left = right = i;
@@ -64,7 +64,7 @@ bool zfind_str(const char* needle, const char* haystack) {
                      z_len,    needle_len, haystack_len);
     generate_zarray(z_array, z_string, z_len);
 
-    for (i = 1; i < z_len; i++) {
+    for (i = 1; i < z_len; ++i) {
         was_found = (z_array[i] == needle_len);
         if (was_found)
             break;
@@ -80,7 +80,7 @@ bool zfind_chr(const char character, const char* str) {
     bool was_found;
     size_t i;
 
-    for (i = 0; i < string_len; i++) {
+    for (i = 0; i < string_len; ++i) {
         was_found = (str[i] == character);
         if (was_found)
             break;

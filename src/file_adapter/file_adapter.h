@@ -13,7 +13,7 @@ typedef struct {
 ** @param: FileAdapter* - pointer to adapter struct in which to load the file.
 ** @param: const char* - name of the file from which to load.
 */
-void  fileadapter_load  (FileAdapter* file,
+void fileadapter_load   (FileAdapter* file,
                          const char*  file_name);
 
 /* Returns character at cursor position and moves cursor to the right by 1.
