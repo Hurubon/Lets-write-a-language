@@ -13,10 +13,9 @@ int main(void) {
     error_check(file != NULL, MALLOC_ERROR);
     fileadapter_load(file, "../testfile.txt");
 
-    /* TODO: Lex(file) */
     mylang_lex(file);
 
-    fileadapter_free(file);
+    fileadapter_free(&file);
     getchar();
     return 0;
 

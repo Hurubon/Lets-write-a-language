@@ -6,6 +6,12 @@
 
 extern int errno;
 
+static const char* error_messages[] = {
+    "Undocumented error!",          /* 0 */
+    "Memory allocation failed!",
+    "End of file reached!",
+};
+
 void error_check(bool statement, int error_code) {
 
     static int cached_errno;
@@ -13,26 +19,11 @@ void error_check(bool statement, int error_code) {
     if (statement) {
         return;
     }
-
-    if (cached_errno != errno && errno != 0) {
+    else if (cached_errno != errno && errno != 0) {
         perror("");
-        getchar();
-        exit(errno);
     }
-
-    switch (error_code) {
-
-        case MALLOC_ERROR:
-            printf("Memory allocation failed!\n");
-            break;
-
-        case EOF_REACHED_FLAG:
-            printf("End of file reached!\n");
-            break;
-
-        default:
-            printf("Undocumented error!\n");
-
+    else {
+        puts(error_messages[error_code]);
     }
 
     getchar();

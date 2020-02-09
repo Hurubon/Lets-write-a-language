@@ -22,9 +22,10 @@ void fileadapter_load   (FileAdapter* file,
 */
 char fileadapter_getchar(FileAdapter* file);
 
-/* Frees the file contents array and the adapter struct itself.
-** @param: FileAdapter* - pointer to adapter struct.
+/* Frees the file contents array and the adapter struct itself and
+** sets the pointer to NULL.
+** @param: FileAdapter** - address pointer to adapter struct.
 */
-void fileadapter_free   (FileAdapter* file);
+void fileadapter_free   (FileAdapter** file);
 
 #endif /* MYLANG_API_FILE_ADAPTER_H */

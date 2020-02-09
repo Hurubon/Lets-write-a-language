@@ -26,10 +26,13 @@ void fileadapter_load(FileAdapter* file, const char* file_name) {
 }
 
 char fileadapter_getchar(FileAdapter* file) {
+    /* For debugging. */
+    error_check(file->cursor < file->length - 1, EOF_REACHED_FLAG);
     return file->contents[file->cursor++];
 }
 
-void fileadapter_free(FileAdapter* file) {
-    free(file->contents);
-    free(file);
+void fileadapter_free(FileAdapter** file) {
+    free((*file)->contents);
+    free(*file);
+    *file = NULL;
 }
