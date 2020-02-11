@@ -3,20 +3,19 @@
 
 #include "bool/bool.h"
 #include "errors/errors.h"
-#include "file_adapter/file_adapter.h"
+#include "ifile/ifile.h"
 #include "zfind_algorithm/zfind_algorithm.h"
 #include "lexer/lexer.h"
 
 int main(void) {
 
-    FileAdapter* file = (FileAdapter*) malloc(sizeof(FileAdapter));
+    IFile* file = (IFile*) malloc(sizeof(IFile));
     error_check(file != NULL, MALLOC_ERROR);
-    fileadapter_load(file, "../testfile.txt");
+    ifile_load(file, "../testfile.txt");
 
     mylang_lex(file);
 
-    fileadapter_free(&file);
-    getchar();
+    ifile_free(&file);
     return 0;
 
 }

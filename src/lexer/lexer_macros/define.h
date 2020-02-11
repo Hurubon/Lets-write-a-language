@@ -1,6 +1,6 @@
 /* TODO: ifndef */
 
-#define IS_WHITESPACE(c)  (c == ' ' || c == '\t' || c == '\n' || c == '\r')
+#define IS_WHITESPACE(c)  (c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\0')
 #define STARTS_LABEL(c)   (isalpha(c) || c == '_')
 #define IS_LABEL_CHAR(c)  (isalpha(c) || isdigit(c) || c == '_')
 #define STARTS_STRING(c)  (c == '\"' || c == '\'')

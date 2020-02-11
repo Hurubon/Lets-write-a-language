@@ -4,7 +4,6 @@
 #include "../bool/bool.h"
 
 #define MALLOC_ERROR 1
-#define EOF_REACHED_FLAG 2
 
 /* Checks if statement is true and handles errors.
 ** @param: int - custom code in case errno can't catch the possible error.

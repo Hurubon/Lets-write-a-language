@@ -1,8 +1,8 @@
 #ifndef MYLANG_LEXER_H
 #define MYLANG_LEXER_H
 
-#include "../file_adapter/file_adapter.h"
+#include "../ifile/ifile.h"
 
-void mylang_lex(FileAdapter* file);
+void mylang_lex(IFile* file);
 
 #endif /* MYLANG_LEXER_H */

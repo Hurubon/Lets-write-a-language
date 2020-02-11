@@ -8,14 +8,14 @@
 
 #include "lexer_macros/define.h"
 
-static void read_label(FileAdapter* file) {
+static void read_label(IFile* file) {
 
     size_t label_start = file->cursor - 1;
     size_t token_len = 0;
     char c;
 
     do {
-        c = fileadapter_getchar(file);
+        c = ifile_getchar(file);
         token_len += 1;
     }
     while (IS_LABEL_CHAR(c));
@@ -26,7 +26,7 @@ static void read_label(FileAdapter* file) {
 
 }
 
-static void read_string(FileAdapter* file, char opening_quote) {
+static void read_string(IFile* file, char opening_quote) {
 
     /* Don't need the opening quote. */
     size_t string_start = file->cursor;
@@ -34,7 +34,7 @@ static void read_string(FileAdapter* file, char opening_quote) {
     char c;
 
     do {
-        c = fileadapter_getchar(file);
+        c = ifile_getchar(file);
         token_len += 1;
     }
     while (c != opening_quote);
@@ -46,7 +46,7 @@ static void read_string(FileAdapter* file, char opening_quote) {
 
 }
 
-static void read_hexadecimal(FileAdapter* file) {
+static void read_hexadecimal(IFile* file) {
 
     /* Don't need the '0x' */
     size_t hex_start = file->cursor;
@@ -54,7 +54,7 @@ static void read_hexadecimal(FileAdapter* file) {
     char c;
 
     do {
-        c = fileadapter_getchar(file);
+        c = ifile_getchar(file);
         token_len += 1;
     }
     while (IS_HEX_DIGIT(c));
@@ -66,7 +66,7 @@ static void read_hexadecimal(FileAdapter* file) {
 
 }
 
-static void read_binary(FileAdapter* file) {
+static void read_binary(IFile* file) {
 
     /* Don't need the initial 0. */
     size_t bin_start = file->cursor;
@@ -74,7 +74,7 @@ static void read_binary(FileAdapter* file) {
     char c;
 
     do {
-        c = fileadapter_getchar(file);
+        c = ifile_getchar(file);
         token_len += 1;
     }
     while (IS_BIN_DIGIT(c));
@@ -86,14 +86,14 @@ static void read_binary(FileAdapter* file) {
 
 }
 
-static void read_decimal(FileAdapter* file) {
+static void read_decimal(IFile* file) {
 
     size_t dec_start = file->cursor - 1;
     size_t token_len = 0;
     char c;
 
     do {
-        c = fileadapter_getchar(file);
+        c = ifile_getchar(file);
         token_len += 1;
     }
     while (IS_DEC_DIGIT(c));
@@ -104,10 +104,10 @@ static void read_decimal(FileAdapter* file) {
 
 }
 
-static void read_number(FileAdapter* file, char first_digit) {
+static void read_number(IFile* file, char first_digit) {
 
     if (first_digit == '0') {
-        if (fileadapter_getchar(file) == 'x')
+        if (ifile_getchar(file) == 'x')
             read_hexadecimal(file);
         else
             read_binary(file);
@@ -118,19 +118,19 @@ static void read_number(FileAdapter* file, char first_digit) {
 
 }
 
-static void read_operator(FileAdapter* file) {
+static void read_operator(IFile* file) {
     printf("{'%.*s': 'operator'}\n", 1, file->contents + file->cursor - 1);
 }
 
-static void read_bracket(FileAdapter* file) {
+static void read_bracket(IFile* file) {
     printf("{'%.*s': 'bracket'}\n", 1, file->contents + file->cursor - 1);
 }
 
-static void read_punctuation(FileAdapter* file) {
+static void read_punctuation(IFile* file) {
     printf("{'%.*s': 'punctuation'}\n", 1, file->contents + file->cursor - 1);
 }
 
-static void analyse(char c, FileAdapter* file) {
+static void analyse(char c, IFile* file) {
 
     if (IS_WHITESPACE(c)) {
         return;
@@ -154,19 +154,19 @@ static void analyse(char c, FileAdapter* file) {
         read_punctuation(file);
     }
     else {
-        printf("Encountered unexpected character: %c\n", c);
+        printf("Encountered unexpected character at character %d: %d\n", file->cursor - 1, (int)c);
     }
 
 }
 
 #include "lexer_macros/undefine.h"
 
-void mylang_lex(FileAdapter* file) {
+void mylang_lex(IFile* file) {
 
     char character;
 
     while (file->cursor < file->length) {
-        character = fileadapter_getchar(file);
+        character = ifile_getchar(file);
         analyse(character, file);
     }
 
