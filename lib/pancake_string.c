@@ -6,172 +6,169 @@
 #include "pancake_string.h"
 
 
-char** pancake_string_split(const char* string, const char delimiter) {
+char** pancake_string_split(const char*  string,
+                            const char   delimiter) {
 
-    /* We add 1 because we care about the \0 character too. See below. */
-    const size_t string_len = strlen(string) + 1;
-    size_t sub_start = 0;
-    size_t sub_index = 0;
-    size_t sub_len;
+    char** substrings_array;
+
+    size_t string_length;
+    size_t delimiter_count = 0;
+
+    size_t substring_start = 0;
+    size_t substring_index = 0;
+
     size_t i;
+    char c;
 
-    char** substrings = malloc((sizeof *substrings) * (string_len / 2));
+    for (i = 0; (c = string[i]) != '\0'; ++i) {
+        delimiter_count += (c == delimiter);
+    }
 
-    for (i = 0; i < string_len; ++i) {
+    string_length = i;
+
+    if (string_length == 0)
+        return NULL;
+
+    /*
+    ** There are delimiter_count + 1 tokens in the given string.
+    ** We also need another element for the NULL pointer terminator.
+    */
+    substrings_array = malloc(
+                        (sizeof *substrings_array) * (delimiter_count + 2)
+                       );
+
+    for (i = 0; i < string_length + 1; ++i) {
 
         /*
         ** Potentially faster to check if i reached the end of the
         ** string (the \0 character) than checking if string[i] == '\0'.
         */
-        if (string[i] == delimiter || i == string_len - 1) {
+        if (string[i] == delimiter || i == string_length) {
 
-            sub_len = i - sub_start;
+            const size_t substring_length = i - substring_start;
+            char* substring = malloc(substring_length + 1);
 
-            substrings[sub_index] = malloc(sub_len + 1);
-            substrings[sub_index][sub_len] = '\0';
-            memcpy(substrings[sub_index], string + sub_start, sub_len);
+            substring[substring_length] = '\0';
+            memcpy(substring, string + substring_start, substring_length);
 
-            sub_index += 1;
-            sub_start = i + 1;
+            substrings_array[substring_index] = substring;
 
             /*
             ** If we just encountered a delimiter, we don't expect the
-            ** next character to also be a delimiter, so we can skip it.
+            ** next character to also be a delimiter, so we can skip it
+            ** and assume a new token starts after it.
             */
-            ++i;
+            substring_start = (++i);
+            substring_index += 1;
 
         }
 
     }
 
-    /* NULL-terminate the array so we can find its length. */
-    substrings[sub_index] = NULL;
-    return substrings;
+    /* NULL-terminate the array so we can later find its length. */
+    substrings_array[substring_index] = NULL;
+
+    return substrings_array;
 
 }
 
-
-/* Alternative implementation. */
-char** pancake_string_split2(const char* string, const char delimiter) {
-
-    /* We add 1 because we care about the \0 character too. See below. */
-    const size_t string_len = strlen(string) + 1;
-    size_t sub_start;
-    size_t sub_len;
-
-    /*
-    ** Allocate arrays to store the indices of delimiters and
-    ** the substrings themselves.
-    */
-    char** substrings = malloc((sizeof *substrings) * (string_len / 2));
-    int* delimiter_indices = malloc((sizeof *delimiter_indices) * (string_len / 2));
-
-    size_t delimiter_index = 1;
-    size_t i;
-
-    /*
-    ** This is used in calculations later on. Basically, we create
-    ** virtual delimiters just before the beginning and just after
-    ** the end of the string.
-    */
-    delimiter_indices[0] = -1;
-
-    /* Store the indices of each delimiter. */
-    for (i = 1; i < string_len; ++i) {
-        if (string[i] == delimiter || i == string_len - 1) {
-            delimiter_indices[delimiter_index++] = i++;
-        }
-    }
-
-    /*
-    ** delimiter_index is now the total number of delimiters,
-    ** including the virtual ones.
-    */
-    for (i = 0; i < delimiter_index - 1; ++i) {
-
-        /*
-        ** A string starts just after a delimiter (here the virtual
-        ** ones come in handy).
-        */
-        sub_start = delimiter_indices[i] + 1;
-
-        /*
-        ** And it's length is however many characters there is until
-        ** the next delimiter.
-        */
-        sub_len = delimiter_indices[i + 1] - sub_start;
-
-        substrings[i] = malloc(sub_len + 1);
-        substrings[i][sub_len] = '\0';
-        memcpy(substrings[i], string + sub_start, sub_len);
-
-    }
-
-    substrings[delimiter_index - 1] = NULL;
-
-    free(delimiter_indices);
-    return substrings;
-
-}
-
-void pancake_string_array_free(char** array) {
-
-    void* pointer;
-    size_t i;
-
-    /* This is to prevent indexing the array twice. */
-    for (i = 0; (pointer = array[i]) != NULL; ++i) {
-        free(pointer);
-    }
-
-    free_comment(array, "Freed array of strings.");
-
-}
-
-char* pancake_string_join(const char** substring_array, const char delimiter) {
+char* pancake_string_join(char**       substrings_array,
+                          const size_t array_length,
+                          const char   delimiter) {
 
     char* joined_string;
-    size_t joined_string_length;
+    size_t joined_length;
 
-    size_t* word_lengths;
+    size_t* word_lengths = malloc((sizeof *word_lengths) * array_length);
     size_t word_lengths_sum = 0;
-    size_t array_length = 0;
 
     size_t i;
 
-    for (i = 0; substring_array[i] != NULL || i < 0; ++i)
-        ++array_length;
-
-    word_lengths = malloc((sizeof *word_lengths) * array_length);
-
-    /* In case the array isn't NULL-terminated. */
-    if (i < 0)
-        return NULL;
-
     for (i = 0; i < array_length; ++i) {
-        size_t word_length = strlen(substring_array[i]);
+
+        char* substring = substrings_array[i];
+        size_t word_length;
+
+        if (substring == NULL) {
+            free(word_lengths);
+            return NULL;
+        }
+
+        word_length = strlen(substring);
         word_lengths[i] = word_length;
         word_lengths_sum += word_length;
+
     }
 
-    joined_string_length = word_lengths_sum + array_length;
-    joined_string = malloc(joined_string_length);
+    joined_length = word_lengths_sum + array_length;
+    joined_string = malloc(joined_length + 1);
 
     for (i = 0; i < array_length; ++i) {
 
-        memcpy(joined_string, substring_array[i], word_lengths[i]);
-        joined_string[word_lengths[i]] = delimiter;
+        const size_t current_word_length = word_lengths[i];
 
-        /* Move the pointer forwards until the beginning of the next word. */
-        joined_string += (word_lengths[i] + 1);
+        memcpy(joined_string, substrings_array[i], current_word_length);
+        joined_string[current_word_length] = delimiter;
+
+        /* Move the pointer forwards to where the next word should start. */
+        joined_string += (current_word_length + 1);
 
     }
 
-    /* Move the pointer back to the beginning of the string. */
-    joined_string -= joined_string_length;
-    joined_string[joined_string_length - 1] = '\0';
-
     free(word_lengths);
+
+    /*
+    ** The pointer should now be pointing at where '\0' should be.
+    ** Put the character there, then move it back to the beginning.
+    */
+    *joined_string = '\0';
+    joined_string -= joined_length;
+
     return joined_string;
+
+}
+
+void pancake_string_array_free(char**       string_array,
+                               const size_t array_length) {
+
+    size_t i;
+    for (i = 0; i < array_length; ++i) {
+        free(string_array[i]);
+    }
+
+    free_comment(string_array, "Freed array of strings.");
+
+}
+
+size_t pancake_string_array_length(char** string_array) {
+    size_t i = 0;
+    while (string_array[i] != NULL)
+        ++i;
+
+    return i;
+}
+
+void pancake_string_reverse(char* string, const size_t string_length) {
+    size_t i;
+    for (i = 0; i < string_length / 2; ++i) {
+        char tmp = string[i];
+        string[i] = string[string_length - i - 1];
+        string[string_length - i - 1] = tmp;
+    }
+}
+
+char* pancake_string_reverse_copy(const char*  string,
+                                  const size_t string_length) {
+
+    char* reversed_string = malloc(string_length + 1);
+    size_t i;
+
+    for (i = 0; i < string_length; ++i) {
+        reversed_string[i] = string[string_length - i - 1];
+    }
+
+    reversed_string[string_length] = '\0';
+
+    return reversed_string;
 
 }
