@@ -48,8 +48,8 @@ char** pancake_string_split(const char*  string,
             const size_t substring_length = i - substring_start;
             char* substring = malloc(substring_length + 1);
 
-            substring[substring_length] = '\0';
             memcpy(substring, string + substring_start, substring_length);
+            substring[substring_length] = '\0';
 
             substrings_array[substring_index] = substring;
 
